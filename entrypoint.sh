@@ -27,17 +27,21 @@ touch .nojekyll
 echo "#################################################"
 echo "Now publishing"
 if [[ -z "${JEKYLL_PAT}" ]]; then
+  echo "using github token"
   TOKEN=${GITHUB_TOKEN}
 else 
+  echo "using personal access token"
   TOKEN=${JEKYLL_PAT}
 fi
 
+echo "figuring out branch from repo URL"
 echo ${GITHUB_REPOSITORY} | grep -E '^([a-z]*)\/\1\.github\.io$' > /dev/null
 if [ $? -eq 0 ]; then
   remote_branch="master"
 else
   remote_branch="gh-pages"
 fi
+echo "using branch ${remote_branch}"
 
 if [ "${GITHUB_REF}" == "refs/heads/${remote_branch}" ]; then
   echo "Cannot publish on branch ${remote_branch}"
