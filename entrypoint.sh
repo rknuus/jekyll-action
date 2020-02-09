@@ -47,13 +47,6 @@ else
 fi
 echo "using branch ${remote_branch}"
 
-if [ "${GITHUB_REF}" == "refs/heads/${remote_branch}" ]; then
-  echo "Cannot publish on branch ${remote_branch}"
-  exit 1
-else
-  echo "Pushing on branch ${remote_branch}"
-fi
-
 remote_repo="https://${TOKEN}@github.com/${REPO}.git"
 git init
 git config user.name "${GITHUB_ACTOR}"
