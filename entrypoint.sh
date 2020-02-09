@@ -40,7 +40,7 @@ if [[ -z "${PUBLISH_REPO}" ]]; then
   REPO=${GITHUB_REPOSITORY}
 fi
 echo "publishing to repo ${REPO}"
-if [[ ${REPO} =~ '^([a-z]*)\/\1\.github\.io$' ]]; then
+if [[ ${REPO} =~ \.github\.io$ ]]; then
   remote_branch="master"
 else
   remote_branch="gh-pages"
