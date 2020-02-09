@@ -35,8 +35,12 @@ else
 fi
 
 echo "figuring out branch from repo URL"
-echo ${GITHUB_REPOSITORY} | grep -E '^([a-z]*)\/\1\.github\.io$' > /dev/null
-if [ $? -eq 0 ]; then
+REPO=${PUBLISH_REPO}
+if [[ -z "${PUBLISH_REPO}" ]]; then
+  REPO=${GITHUB_REPOSITORY}
+fi
+echo "publishing to repo ${REPO}"
+if [[ ${REPO} =~ '^([a-z]*)\/\1\.github\.io$' ]]; then
   remote_branch="master"
 else
   remote_branch="gh-pages"
@@ -50,7 +54,7 @@ else
   echo "Pushing on branch ${remote_branch}"
 fi
 
-remote_repo="https://${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+remote_repo="https://${TOKEN}@github.com/${REPO}.git"
 git init
 git config user.name "${GITHUB_ACTOR}"
 git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
