@@ -11,15 +11,18 @@ echo "Installion completed"
 if [[ -z "${SRC}" ]]; then
   SRC=$(find . -name _config.yml -exec dirname {} \;)
 fi
+if [[ -z "${BUILD_DIR}" ]]; then
+  BUILD_DIR=_site
+fi
 
 echo "#################################################"
 echo "Source for the Jekyll site is set to ${SRC}"
 
-bundle exec jekyll build -s ${SRC} -d build
+bundle exec jekyll build -s ${SRC} -d ${BUILD_DIR}
 echo "#################################################"
 echo "Jekyll build done"
 
-cd build
+cd ${BUILD_DIR}
 
 # No need to have GitHub Pages to run Jekyll
 touch .nojekyll
