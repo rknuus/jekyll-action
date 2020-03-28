@@ -1,83 +1,105 @@
-# jekyll-action
-A GitHub Action to build and publish Jekyll sites to GitHub Pages
+# yet-another-jekyll-action
+A GitHub Action to build and publish Jekyll sites to GitHub Pages. Forked from [helaili](https://github.com/helaili/jekyll-action) and simplified.
 
-Out-of-the-box Jekyll with GitHub Pages allows you to leverage a limited, white-listed, set of gems. Complex sites requiring custom ones or non white-listed ones (AsciiDoc for intstance) used to require a continuous integration build in order to pre-process the site.
+Out-of-the-box Jekyll with GitHub Pages allows you to leverage a limited, white-listed, set of gems. Complex sites using additional gems (AsciiDoc for intstance) require a continuous integration build in order to pre-process the site.
 
 ## Usage
 
 ### Create a Jekyll site
-If you repo doesn't already have one, create a new Jekyll site:  `jekyll new sample-site`. See [the Jekyll website](https://jekyllrb.com/) for more information. In this repo, we have created a site within a `sample_site` folder within the repository because the repository's main goal is not to be a website. If it was the case, we would have created the site at the root of the repository.
+Create a new Jekyll site from scratch with `jekyll new sample-site`. See [the Jekyll website](https://jekyllrb.com/) for more information.
+
+Note: If you plan to use asciidoc/asciidoctor either you have to convert md files to adoc or you could start off by forking [Jekyll AsciiDoc Quickstart](https://github.com/asciidoctor/jekyll-asciidoc-quickstart). In this case you can remove the files `.travis.yml` and `Rakefile`.
 
 ### Create a `Gemfile`
-As you are using this action to leverage specific Gems, well, you need to declare them! In the sample below we are using [the Jekyll AsciiDoc plugin](https://github.com/asciidoctor/jekyll-asciidoc)
+To leverage specific gems specify them in a `Gemfile`. The following example uses the [github-pages](https://github.com/github/pages-gem) gem to base Jekyll on the GitHub Pages approach and adds the [Jekyll AsciiDoc plugin](https://github.com/asciidoctor/jekyll-asciidoc)
 
 ```Ruby
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem 'jekyll', '~> 3.8.5'
-gem 'coderay', '~> 1.1.0'
+gem "bundler"
 
 group :jekyll_plugins do
+  gem "github-pages", '~> 202'
   gem 'jekyll-asciidoc', '~> 2.1.1'
 end
-
 ```
 
 ### Configure your Jekyll site
-Edit the configuration file of your Jekyll site (`_config.yml`) to leverage these plugins. In our sample, we want to leverage AsciiDoc so we added the following section:
+Edit the configuration file of your Jekyll site (`_config.yml`) to configure these plugins. The configuration for a blog site could look as follows:
 
 ```yaml
+title: <your title>
+description: >-
+  <your description>
+author: <your name>
+email: <your email>
+url: <the site's URL>
+github_username: <your github user name>
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-asciidoc
 asciidoc: {}
 asciidoctor:
   base_dir: :docdir
   safe: unsafe
   attributes:
-    - idseparator=_
-    - source-highlighter=coderay
+    - imagesdir=/images/post-images/
     - icons=font
+    - source-highlighter=coderay
+    - coderay-css=style
+    - figure-caption!
+permalink: /blog/:year/:month/:day/:title
+
+exclude:
+  - .jekyll-cache/
+  - Gemfile
+  - Gemfile.lock
+  - README.md
 ```
 
-Note that we also renamed `index.html` to `index.adoc` and modified this file accordingly in order to leverage AsciiDoc.
+### Configure CI
+Create a file `.github/workflows/main.yml` in your project with content:
+```
+name: CI
 
-### Use the action
-Use the `helaili/jekyll-action@master` action in your workflow file. It needs access to a `JEKYLL_PAT` secret set with a Personal Access Token. The directory where the Jekyll site lives will be detected (based on the location of `_config.yml`) but you can also explicitly set this directory by setting the `SRC` environment variable (`sample_site` for us).
+on: [push]
 
-Note that it might be a good idea to use the `actions/bin/filter` action so the site is built only when a push happens on `master`.
+jobs:
+  build:
 
-<img width="1100" alt="image" src="https://user-images.githubusercontent.com/2787414/53498189-1ef70c80-3aa6-11e9-9dd1-c3b46657c499.png">
+    runs-on: ubuntu-latest
 
-
-```js
-workflow "Jekyll build now" {
-  resolves = [
-    "Jekyll Action",
-  ]
-  on = "push"
-}
-
-action "Jekyll Action" {
-  uses = "helaili/jekyll-action@master"
-  needs = "Filters for GitHub Actions"
-  env = {
-    SRC = "sample_site"
-  }
-  secrets = ["JEKYLL_PAT"]
-}
-
-action "Filters for GitHub Actions" {
-  uses = "actions/bin/filter@b2bea0749eed6beb495a8fa194c071847af60ea1"
-  args = "branch master"
-}
-
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          ref: master
+      - name: Jekyll Action
+        uses: rknuus/yet-another-jekyll-action@master
+        env:
+          JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
+          PUBLISH_REPO: <account>/<account>.github.io
 ```
 
-Upon successful execution, the GitHub Pages publishing will happen automatically and will be listed on the *_environment_* tab of your repository. 
+By default the publishing script automatically determines the Jekyll source directory (which contains file `_config.yml`). To customize the path you can pass an `env` variable called `SRC`.
 
-![image](https://user-images.githubusercontent.com/2787414/51083469-31e29700-171b-11e9-8f10-8c02dd485f83.png)
+Unless customized by passing `env` variable `BUILD_DIR` the output directory of Jekyll is set to `_site`.
 
-Just click on the *_View deployment_* button of the `github-pages` environment to navigate to your GitHub Pages site.
+The Jekyll output is published to the same repository containing the sources. To customize the repository to publish to pass an `env` variable `PUBLISH_REPO`.
 
-![image](https://user-images.githubusercontent.com/2787414/51083411-188d1b00-171a-11e9-9a25-f8b06f33053e.png)
+Note that for publishing repositories https://&lt;account&gt;.github.io the output is published to branch "master". For all other repositories to branch "gh-master".
 
-### Known Limitation
-Publishing of the GitHub pages can fail when using the `GITHUB_TOKEN` secret instead of the `JEKYLL_PAT`. But it might work too :smile: 
+### Configure GitHub project
+First create a new project on GitHub and follow the steps explained in the empty GitHub repository to link your local repository to the remote one.
+
+In [Settings/Developer settings/Personal access tokens](https://github.com/settings/tokens) create a new token with access to all `repo` elements. Copy the token for later use.
+
+In your GitHub project's settings/Secrets press "Add a new secret", enter "JEKYLL_PAT" as name and the token as value. Secrets are explained in the [GitHub help](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets).
+
+In your GitHub project's settings/Options scroll down to section "GitHub Pages" and select "master branch" as Source.
+
+On every push to branch master go to tab "Actions" on your project site and click on the triggered CI build to track publishing progress.
+
+## Known limitations
+In the setup described above the site will be published twice, a custom one available under https://&lt;account&gt;.github.io and the standard one (with limited Jekyll plugin support) to https://&lt;account&gt;.github.io/&lt;project&gt;.
