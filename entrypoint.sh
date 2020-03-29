@@ -18,8 +18,11 @@ REPO_NAME=${PUBLISH_REPO}
 [[ -z "${REPO_NAME}" ]] && REPO_NAME=${GITHUB_REPOSITORY}
 echo "Remote repository name is set to ${REPO_NAME}"
 
-REMOTE_BRANCH="master"
-[[ ${REPO_NAME} =~ \.github\.io$ ]] || REMOTE_BRANCH="gh-pages"
+REMOTE_BRANCH=${PUBLISH_BRANCH}
+if [[ -z "${REMOTE_BRANCH}" ]]; then
+    REMOTE_BRANCH="master"
+    [[ ${REPO_NAME} =~ \.github\.io$ ]] || REMOTE_BRANCH="gh-pages"
+fi
 echo "Remote repository branch is set to ${REMOTE_BRANCH}"
 
 REMOTE_REPO="https://${JEKYLL_PAT}@github.com/${REPO_NAME}.git"

@@ -88,7 +88,7 @@ Unless customized by passing `env` variable `BUILD_DIR` the output directory of 
 
 The Jekyll output is published to the same repository containing the sources. To customize the repository to publish to pass an `env` variable `PUBLISH_REPO`.
 
-Note that for publishing repositories https://&lt;account&gt;.github.io the output is published to branch "master". For all other repositories to branch "gh-master".
+Unless customized by passing `env` variable `PUBLISH_BRANCH` the plublication branch is set to "master" for repositories https://&lt;account&gt;.github.io or to "gh-master" for all other repositories.
 
 ### Configure GitHub project
 First create a new project on GitHub and follow the steps explained in the empty GitHub repository to link your local repository to the remote one.
