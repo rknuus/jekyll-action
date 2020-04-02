@@ -1,0 +1,14 @@
+# Copyright 2020 rknuus
+
+name: yet-another-jekyll-action
+author: rknuus
+description: |-
+  A GitHub Action to build and publish Jekyll sites to GitHub Pages.
+  Forked from [helaili](https://github.com/helaili/jekyll-action) and simplified.
+
+  Out-of-the-box Jekyll with GitHub Pages allows you to leverage a limited,
+  white-listed, set of gems. Complex sites using additional gems (AsciiDoc for
+  intstance) require a continuous integration build in order to pre-process the site.
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
