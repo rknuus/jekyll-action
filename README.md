@@ -63,7 +63,10 @@ Create a file `.github/workflows/main.yml` in your project with content:
 ```
 name: CI
 
-on: [push]
+on:
+  push:
+      branches:
+        - master
 
 jobs:
   build:
@@ -72,7 +75,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           ref: master
       - name: Jekyll Action
