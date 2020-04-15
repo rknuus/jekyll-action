@@ -85,7 +85,7 @@ jobs:
           PUBLISH_REPO: <account>/<account>.github.io
 ```
 
-By default the publishing script automatically determines the Jekyll source directory (which contains file `_config.yml`). To customize the path you can pass an `env` variable called `SRC`.
+By default the publishing script automatically determines the Jekyll source directory (which contains file `_config.yml`). To customize the path you can pass an `env` variable called `SRC`. The publishing script also searches for your site's `Gemfile` unless customized by `env` variable `GEM`.
 
 Unless customized by passing `env` variable `BUILD_DIR` the output directory of Jekyll is set to `_site`.
 
