@@ -20,6 +20,7 @@ RUN apt update && \
         git \
         libffi6 \
         make \
+        python \
         shellcheck \
     && bundle config --global silence_root_warning 1
 
