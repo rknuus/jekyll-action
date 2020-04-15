@@ -1,6 +1,6 @@
 FROM ruby:2-slim
 
-LABEL version="1.1.0"
+LABEL version="1.2.0"
 LABEL repository="https://github.com/rknuus/yet-another-jekyll-action"
 LABEL homepage="https://github.com/rknuus/yet-another-jekyll-action"
 LABEL maintainer="rknuus@gmail.com"
@@ -17,11 +17,10 @@ RUN apt update && \
         build-essential \
         ca-certificates \
         curl \
+        git \
         libffi6 \
         make \
         shellcheck \
-        libffi6 \
-        git \
     && bundle config --global silence_root_warning 1
 
 COPY entrypoint.sh /

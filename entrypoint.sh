@@ -11,6 +11,10 @@ echo "Evaluating & verifying paramters..."
 [[ -z "${SRC}" ]] && die "Error: could not locate source directory containing file _config.yml"
 echo "Source for the Jekyll site is set to ${SRC}"
 
+[[ -z "${GEM}" ]] && GEM=$(find . -name Gemfile -exec dirname {} \;)
+[[ -z "${GEM}" ]] && die "Error: could not locate directory containing file Gemfile"
+echo "Directory containing Gemfile is set to ${GEM}"
+
 [[ -z "${BUILD_DIR}" ]] && BUILD_DIR=_site
 echo "Output directory is set to ${BUILD_DIR}"
 
@@ -30,7 +34,9 @@ echo "Full remote repository URL is not printed because of the token"
 
 echo "#################################################"
 echo "Installing..."
+pushd "${GEM}"
 bundle install
+popd
 
 echo "#################################################"
 echo "Building..."
