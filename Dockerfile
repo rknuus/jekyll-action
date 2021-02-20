@@ -1,6 +1,6 @@
 FROM ruby:2-slim
 
-LABEL version="1.2.0"
+LABEL version="1.2.1"
 LABEL repository="https://github.com/rknuus/yet-another-jekyll-action"
 LABEL homepage="https://github.com/rknuus/yet-another-jekyll-action"
 LABEL maintainer="rknuus@gmail.com"
@@ -20,7 +20,7 @@ RUN apt update && \
         git \
         libffi6 \
         make \
-        python \
+        python3 \
         shellcheck \
     && bundle config --global silence_root_warning 1
 
